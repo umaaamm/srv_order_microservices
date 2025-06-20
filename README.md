@@ -6,6 +6,7 @@ A Go service for simple API contact.
 
 - Clean Architecture
 - Using Go Fiber
+- MongoDb
 
 ## Requirements
 
