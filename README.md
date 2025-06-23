@@ -1,12 +1,13 @@
-# srv_contact
+# srv_order
 
-A Go service for simple API contact.
+A Go service for simple API order.
 
 ## Features
 
 - Clean Architecture
 - Using Go Fiber
 - MongoDb
+- gRPC
 
 ## Requirements
 
@@ -18,5 +19,5 @@ A Go service for simple API contact.
 ### Clone the repository
 
 ```bash
-git clone https://github.com/umaaamm/srv_contact.git
-cd srv_contact
+git clone https://github.com/umaaamm/srv_order_microservices.git
+cd srv_order_microservices
