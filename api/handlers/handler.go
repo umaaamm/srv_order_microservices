@@ -6,14 +6,14 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"srv_contact/main/api/presenter"
-	"srv_contact/main/pkg/contact"
-	"srv_contact/main/pkg/entities"
+	"srv_order/main/api/presenter"
+	"srv_order/main/pkg/entities"
+	contact "srv_order/main/pkg/order"
 )
 
-func AddContact(service contact.Service) fiber.Handler {
+func AddOrder(service contact.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var requestBody entities.Contact
+		var requestBody entities.Order
 		err := c.BodyParser(&requestBody)
 		if err != nil {
 			c.Status(http.StatusBadRequest)
@@ -24,7 +24,17 @@ func AddContact(service contact.Service) fiber.Handler {
 			return c.JSON(presenter.ContactErrorResponse(errors.New(
 				"Please specify name and noHp")))
 		}
-		result, err := service.InsertContact(&requestBody)
+
+		resultFromContact, err := service.GetContactFromGRPC(requestBody.NoHp)
+
+		if err != nil {
+			c.Status(http.StatusInternalServerError)
+			return c.JSON(presenter.ContactErrorResponse(err))
+		}
+
+		requestBody.Order = resultFromContact.Nama // for sample only
+
+		result, err := service.InsertOrder(&requestBody)
 		if err != nil {
 			c.Status(http.StatusInternalServerError)
 			return c.JSON(presenter.ContactErrorResponse(err))
@@ -33,48 +43,9 @@ func AddContact(service contact.Service) fiber.Handler {
 	}
 }
 
-func UpdateContact(service contact.Service) fiber.Handler {
+func Gets(service contact.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var requestBody entities.Contact
-		err := c.BodyParser(&requestBody)
-		if err != nil {
-			c.Status(http.StatusBadRequest)
-			return c.JSON(presenter.ContactErrorResponse(err))
-		}
-		result, err := service.UpdateContact(&requestBody)
-		if err != nil {
-			c.Status(http.StatusInternalServerError)
-			return c.JSON(presenter.ContactErrorResponse(err))
-		}
-		return c.JSON(presenter.ContactSuccessResponse(result))
-	}
-}
-
-func RemoveContact(service contact.Service) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		var requestBody entities.DeleteRequest
-		err := c.BodyParser(&requestBody)
-		if err != nil {
-			c.Status(http.StatusBadRequest)
-			return c.JSON(presenter.ContactErrorResponse(err))
-		}
-		contactID := requestBody.ID
-		err = service.RemoveContact(contactID)
-		if err != nil {
-			c.Status(http.StatusInternalServerError)
-			return c.JSON(presenter.ContactErrorResponse(err))
-		}
-		return c.JSON(&fiber.Map{
-			"status": true,
-			"data":   "updated successfully",
-			"err":    nil,
-		})
-	}
-}
-
-func GetContacts(service contact.Service) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		fetched, err := service.FetchContacts()
+		fetched, err := service.FetchOrders()
 		if err != nil {
 			c.Status(http.StatusInternalServerError)
 			return c.JSON(presenter.ContactErrorResponse(err))

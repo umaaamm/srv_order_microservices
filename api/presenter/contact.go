@@ -4,20 +4,22 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
-	"srv_contact/main/pkg/entities"
+	"srv_order/main/pkg/entities"
 )
 
-type Contact struct {
-	ID   primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Nama string             `json:"nama"`
-	NoHp string             `json:"noHp"`
+type Order struct {
+	ID    primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Nama  string             `json:"nama"`
+	NoHp  string             `json:"noHp"`
+	Order string             `json:"order"`
 }
 
-func ContactSuccessResponse(data *entities.Contact) *fiber.Map {
-	contact := Contact{
-		ID:   data.ID,
-		Nama: data.Nama,
-		NoHp: data.NoHp,
+func ContactSuccessResponse(data *entities.Order) *fiber.Map {
+	contact := Order{
+		ID:    data.ID,
+		Nama:  data.Nama,
+		NoHp:  data.NoHp,
+		Order: data.Order,
 	}
 	return &fiber.Map{
 		"status": true,
@@ -26,7 +28,7 @@ func ContactSuccessResponse(data *entities.Contact) *fiber.Map {
 	}
 }
 
-func ContactsSuccessResponse(data *[]Contact) *fiber.Map {
+func ContactsSuccessResponse(data *[]Order) *fiber.Map {
 	return &fiber.Map{
 		"status": true,
 		"data":   data,
